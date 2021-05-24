@@ -3,10 +3,10 @@
 @time using Base.Threads
 @time using Dates
 @time using NearestNeighbors
-@time using LightGraphs
+# @time using LightGraphs
 @time using LinearAlgebra
 @time using Distributions
-@time using Plots
+# @time using Plots
 # @time using CUDA
 @time using CSV, DataFrames
 
@@ -18,34 +18,56 @@ r2(x) = round(x, digits = 2)
 n = 10^6
 ID = 1:n
 number_of_host = 10
-para_range = Uniform(0.05, 2.0)
-brownian = MvNormal(2, 0.01) # moving process
+# para_range = Uniform(0.05, 0.20)
+ε = 0.001
+brownian = MvNormal(2, ε) # moving process
 end_time = 100
 
-ε = 0.0008
-β, μ = rand(para_range), rand(para_range)
-R_0 = β / μ
+notepad = open("train.csv", "w")
+print(notepad, "obs, beta, mu")
+for t ∈ 1:end_time
+    print(notepad, ", t$t")
+end
+println(notepad)
+close(notepad)
 
-location = rand(2, n) # micro location
+for T ∈ 1:10000
+println("                             T: $T")
 S_ = zeros(Int64, end_time)
 I_ = zeros(Int64, end_time)
 R_ = zeros(Int64, end_time)
-state = Array{Char, 1}(undef, n); state .= 'S' # using SEIR model
-
+state = Array{Char, 1}(undef, n); state .= 'S' # using SIR model
 host = rand(ID, number_of_host); state[host] .= 'I'
 
+location = rand(2, n) # micro location
+β, μ = rand(Uniform(0.00, 0.50)), rand(Uniform(0.50, 1.00))    
+R_0 = β / μ
 println("β: $(r2(β)), μ: $(r2(μ)), R_0: $(r2(R_0))")
+
 @time for t ∈ 1:end_time
+
     bit_S = (state .== 'S'); n_S = sum(bit_S)           ; S_[t] = n_S
     bit_I = (state .== 'I'); n_I = sum(bit_I)           ; I_[t] = n_I
                            ; n_R = sum((state .== 'R')) ; R_[t] = n_R
-    
-    println("t: $(lpad(t, 3, '0')) ",
-            "S: $(lpad(n_S, 6, '_')) ",
-            "I: $(lpad(n_I, 6, '_')) ",
-            "R: $(lpad(n_R, 6, '_'))")
+
+    print(".")
+    # println("t: $(lpad(t, 3, '0')) ",
+    #         "S: $(lpad(n_S, 6, '_')) ",
+    #         "I: $(lpad(n_I, 6, '_')) ",
+    #         "R: $(lpad(n_R, 6, '_'))")
 
     if n_I == 0 println("!!"); break; end
+    if t == end_time
+        println("!")
+        notepad = open("train.csv", "a")
+        try
+            println(notepad, "$T, $β, $μ, ", string(R_)[2:end-1])
+        catch
+            println("error: something wrong!")
+        finally
+            close(notepad)
+        end
+    end
 
     ID_S = ID[bit_S]
     ID_I = ID[bit_I]
@@ -61,4 +83,6 @@ println("β: $(r2(β)), μ: $(r2(μ)), R_0: $(r2(R_0))")
     
     state[ID_infected] .= 'I'
     state[(bit_I .& (rand(n) .< μ))] .= 'R'
+end
+
 end
