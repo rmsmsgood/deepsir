@@ -24,14 +24,14 @@ brownian = MvNormal(2, ε) # moving process
 end_time = 100
 
 notepad = open("train.csv", "w")
-print(notepad, "obs, beta, mu")
+print(notepad, "obs, bom, beta, mu")
 for t ∈ 1:end_time
     print(notepad, ", t$t")
 end
 println(notepad)
 close(notepad)
 
-for T ∈ 1:10000
+for T ∈ 1:10^5
 println("                             T: $T")
 S_ = zeros(Int64, end_time)
 I_ = zeros(Int64, end_time)
@@ -40,11 +40,11 @@ state = Array{Char, 1}(undef, n); state .= 'S' # using SIR model
 host = rand(ID, number_of_host); state[host] .= 'I'
 
 location = rand(2, n) # micro location
-β, μ = rand(Uniform(0.00, 0.50)), rand(Uniform(0.50, 1.00))    
+β, μ = rand(Uniform(0.1, 0.5)), rand(Uniform(0.5, 0.9))
 R_0 = β / μ
 println("β: $(r2(β)), μ: $(r2(μ)), R_0: $(r2(R_0))")
 
-@time for t ∈ 1:end_time
+for t ∈ 1:end_time
 
     bit_S = (state .== 'S'); n_S = sum(bit_S)           ; S_[t] = n_S
     bit_I = (state .== 'I'); n_I = sum(bit_I)           ; I_[t] = n_I
@@ -56,12 +56,12 @@ println("β: $(r2(β)), μ: $(r2(μ)), R_0: $(r2(R_0))")
     #         "I: $(lpad(n_I, 6, '_')) ",
     #         "R: $(lpad(n_R, 6, '_'))")
 
-    if n_I == 0 println("!!"); break; end
+    if n_I == 0 println("!"); break; end
     if t == end_time
-        println("!")
+        println(">")
         notepad = open("train.csv", "a")
         try
-            println(notepad, "$T, $β, $μ, ", string(R_)[2:end-1])
+            println(notepad, "$T, $(β/μ), $β, $μ, ", string(R_)[2:end-1])
         catch
             println("error: something wrong!")
         finally
@@ -80,7 +80,7 @@ println("β: $(r2(β)), μ: $(r2(μ)), R_0: $(r2(R_0))")
 
     bit_infected = rand(n_S) .< (1 .- (1 - β).^contact)
     ID_infected = ID_S[bit_infected]
-    
+
     state[ID_infected] .= 'I'
     state[(bit_I .& (rand(n) .< μ))] .= 'R'
 end
