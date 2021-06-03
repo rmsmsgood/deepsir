@@ -15,23 +15,28 @@ r2(x) = round(x, digits = 2)
 # seed_number = 0
 # Random.seed!(seed_number);
 
-n = 10^6
+n = 10^5
 ID = 1:n
 number_of_host = 10
 # para_range = Uniform(0.05, 0.20)
-ε = 0.001
+ε = 0.01
 brownian = MvNormal(2, ε) # moving process
 end_time = 100
 
-notepad = open("train.csv", "w")
-print(notepad, "obs, bom, beta, mu")
+notepad_I = open("training_I.csv", "w")
+notepad_R = open("training_R.csv", "w")
+print(notepad_I, "obs, bom, beta, mu")
+print(notepad_R, "obs, bom, beta, mu")
 for t ∈ 1:end_time
-    print(notepad, ", t$t")
+    print(notepad_I, ", t$t")
+    print(notepad_R, ", t$t")
 end
-println(notepad)
-close(notepad)
+println(notepad_I)
+println(notepad_R)
+close(notepad_I)
+close(notepad_R)
 
-for T ∈ 1:10^5
+for T ∈ 1:10^7
 println("                             T: $T")
 S_ = zeros(Int64, end_time)
 I_ = zeros(Int64, end_time)
@@ -40,7 +45,7 @@ state = Array{Char, 1}(undef, n); state .= 'S' # using SIR model
 host = rand(ID, number_of_host); state[host] .= 'I'
 
 location = rand(2, n) # micro location
-β, μ = rand(Uniform(0.1, 0.5)), rand(Uniform(0.5, 0.9))
+β, μ = rand(Uniform(0.1, 0.9)), rand(Uniform(0.1, 0.9))
 R_0 = β / μ
 println("β: $(r2(β)), μ: $(r2(μ)), R_0: $(r2(R_0))")
 
@@ -59,13 +64,16 @@ for t ∈ 1:end_time
     if n_I == 0 println("!"); break; end
     if t == end_time
         println(">")
-        notepad = open("train.csv", "a")
+        notepad_I = open("training_I.csv", "a")
+        notepad_R = open("training_R.csv", "a")
         try
-            println(notepad, "$T, $(β/μ), $β, $μ, ", string(R_)[2:end-1])
+            println(notepad_I, "$T, $(β/μ), $β, $μ, ", string(I_)[2:end-1])
+            println(notepad_R, "$T, $(β/μ), $β, $μ, ", string(R_)[2:end-1])
         catch
             println("error: something wrong!")
         finally
-            close(notepad)
+            close(notepad_I)
+            close(notepad_R)
         end
     end
 
