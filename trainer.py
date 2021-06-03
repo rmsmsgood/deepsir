@@ -5,11 +5,11 @@ import pandas as pd
 import datetime
 import os
 
-
+# os.chdir("C:/Users/rmsms/OneDrive/lab/deepsir")
 print(os.getcwd())
-DATA = pd.read_csv("train.csv")
-Y = DATA.iloc[:,1:3].to_numpy()
-X = DATA.iloc[:,3:].to_numpy()
+DATA = pd.read_csv("training_I.csv")
+Y = DATA.iloc[:,2:4].to_numpy()
+X = DATA.iloc[:,4:].to_numpy()
 
 model = keras.Sequential()
 for k in range(6):
