@@ -15,11 +15,11 @@ r2(x) = round(x, digits = 2)
 # seed_number = 0
 # Random.seed!(seed_number);
 
-n = 10^5
+n = 25 * 10^5
 ID = 1:n
 number_of_host = 10
 # para_range = Uniform(0.05, 0.20)
-ε = 0.01
+ε = sqrt(1/n)
 brownian = MvNormal(2, ε) # moving process
 end_time = 100
 
@@ -45,36 +45,31 @@ state = Array{Char, 1}(undef, n); state .= 'S' # using SIR model
 host = rand(ID, number_of_host); state[host] .= 'I'
 
 location = rand(2, n) # micro location
+# β, μ = 0.11492613, 0.16816714
 β, μ = rand(Uniform(0.1, 0.9)), rand(Uniform(0.1, 0.9))
 R_0 = β / μ
 println("β: $(r2(β)), μ: $(r2(μ)), R_0: $(r2(R_0))")
+if R_0 > 2 println("bom > 2!"); continue; end
 
 for t ∈ 1:end_time
 
-    bit_S = (state .== 'S'); n_S = sum(bit_S)           ; S_[t] = n_S
-    bit_I = (state .== 'I'); n_I = sum(bit_I)           ; I_[t] = n_I
-                           ; n_R = sum((state .== 'R')) ; R_[t] = n_R
+    bit_S = (state .== 'S'); n_S = sum(bit_S); S_[t] = n_S
+    bit_I = (state .== 'I'); n_I = sum(bit_I); I_[t] = n_I
+    bit_I = (state .== 'R'); n_R = sum(bit_R); R_[t] = n_R
 
-    print(".")
+    print("$n_I - ")
     # println("t: $(lpad(t, 3, '0')) ",
     #         "S: $(lpad(n_S, 6, '_')) ",
     #         "I: $(lpad(n_I, 6, '_')) ",
     #         "R: $(lpad(n_R, 6, '_'))")
 
-    if n_I == 0 println("!"); break; end
+    if n_I == 0
+        println("!")
+        break
+    end
     if t == end_time
         println(">")
-        notepad_I = open("training_I.csv", "a")
-        notepad_R = open("training_R.csv", "a")
-        try
-            println(notepad_I, "$T, $(β/μ), $β, $μ, ", string(I_)[2:end-1])
-            println(notepad_R, "$T, $(β/μ), $β, $μ, ", string(R_)[2:end-1])
-        catch
-            println("error: something wrong!")
-        finally
-            close(notepad_I)
-            close(notepad_R)
-        end
+        break
     end
 
     ID_S = ID[bit_S]
@@ -91,6 +86,18 @@ for t ∈ 1:end_time
 
     state[ID_infected] .= 'I'
     state[(bit_I .& (rand(n) .< μ))] .= 'R'
+end
+
+notepad_I = open("training_I.csv", "a")
+notepad_R = open("training_R.csv", "a")
+try
+    println(notepad_I, "$T, $(β/μ), $β, $μ, ", string(I_)[2:end-1])
+    println(notepad_R, "$T, $(β/μ), $β, $μ, ", string(R_)[2:end-1])
+catch
+    println("error: something wrong!")
+finally
+    close(notepad_I)
+    close(notepad_R)
 end
 
 end

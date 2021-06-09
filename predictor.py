@@ -11,3 +11,9 @@ loaded.predict(X[:5]); Y[:5]
 
 loaded.evaluate(X[:300], Y[:300])
 sum(sum((loaded.predict(X[:300]) - Y[:300])**2))/600
+
+# ---
+
+DATA = pd.read_csv("대구광역시_기초지자체별 일일 코로나19 확진자 수_20210309.csv", encoding='utf-8')
+real = DATA.iloc[:100,2].to_numpy().reshape(1,100)
+loaded.predict(real)
