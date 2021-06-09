@@ -55,7 +55,7 @@ for t ∈ 1:end_time
 
     bit_S = (state .== 'S'); n_S = sum(bit_S); S_[t] = n_S
     bit_I = (state .== 'I'); n_I = sum(bit_I); I_[t] = n_I
-    bit_I = (state .== 'R'); n_R = sum(bit_R); R_[t] = n_R
+    bit_R = (state .== 'R'); n_R = sum(bit_R); R_[t] = n_R
 
     print("$n_I - ")
     # println("t: $(lpad(t, 3, '0')) ",
