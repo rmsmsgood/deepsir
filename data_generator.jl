@@ -88,16 +88,18 @@ for t ∈ 1:end_time
     state[(bit_I .& (rand(n) .< μ))] .= 'R'
 end
 
-notepad_I = open("training_I.csv", "a")
-notepad_R = open("training_R.csv", "a")
-try
-    println(notepad_I, "$T, $(β/μ), $β, $μ, ", string(I_)[2:end-1])
-    println(notepad_R, "$T, $(β/μ), $β, $μ, ", string(R_)[2:end-1])
-catch
-    println("error: something wrong!")
-finally
-    close(notepad_I)
-    close(notepad_R)
+if I_[10] != 0
+    notepad_I = open("training_I.csv", "a")
+    notepad_R = open("training_R.csv", "a")
+    try
+        println(notepad_I, "$T, $(β/μ), $β, $μ, ", string(I_)[2:end-1])
+        println(notepad_R, "$T, $(β/μ), $β, $μ, ", string(R_)[2:end-1])
+    catch
+        println("error: something wrong!")
+    finally
+        close(notepad_I)
+        close(notepad_R)
+    end
 end
 
 end
