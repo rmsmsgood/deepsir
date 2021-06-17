@@ -15,11 +15,11 @@ r2(x) = round(x, digits = 2)
 # seed_number = 0
 # Random.seed!(seed_number);
 
-n = 25 * 10^5
+n = 10^5
 ID = 1:n
-number_of_host = 10
+number_of_host = 1
 # para_range = Uniform(0.05, 0.20)
-ε = sqrt(1/n)
+ε = 5*10^(-3)
 brownian = MvNormal(2, ε) # moving process
 end_time = 100
 
