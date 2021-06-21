@@ -37,7 +37,13 @@ close(notepad_I)
 close(notepad_R)
 
 for T ∈ 1:10^7
-println("                             T: $T")
+β, μ = rand(Uniform(0.1, 0.9)), rand(Uniform(0.1, 0.9))
+R_0 = β / μ
+println("β: $(r2(β)), μ: $(r2(μ)), R_0: $(r2(R_0))")
+if R_0 > 2 println("bom > 2!"); continue; end
+
+for seed ∈ 1:5
+println("                             T: $T - seed: $seed")
 S_ = zeros(Int64, end_time)
 I_ = zeros(Int64, end_time)
 R_ = zeros(Int64, end_time)
@@ -46,10 +52,6 @@ host = rand(ID, number_of_host); state[host] .= 'I'
 
 location = rand(2, n) # micro location
 # β, μ = 0.11492613, 0.16816714
-β, μ = rand(Uniform(0.1, 0.9)), rand(Uniform(0.1, 0.9))
-R_0 = β / μ
-println("β: $(r2(β)), μ: $(r2(μ)), R_0: $(r2(R_0))")
-if R_0 > 2 println("bom > 2!"); continue; end
 
 for t ∈ 1:end_time
 
@@ -64,6 +66,7 @@ for t ∈ 1:end_time
     #         "R: $(lpad(n_R, 6, '_'))")
 
     if n_I == 0
+        R_[t:end] .= R_[t]
         println("!")
         break
     end
@@ -86,7 +89,7 @@ for t ∈ 1:end_time
 
     state[ID_infected] .= 'I'
     state[(bit_I .& (rand(n) .< μ))] .= 'R'
-end
+end # for t ∈ 1:end_time
 
 if I_[10] != 0
     notepad_I = open("training_I.csv", "a")
@@ -102,4 +105,6 @@ if I_[10] != 0
     end
 end
 
-end
+end # for seed ∈ 1:5
+
+end # for T ∈ 1:10^7
