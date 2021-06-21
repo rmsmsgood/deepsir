@@ -17,10 +17,12 @@ r2(x) = round(x, digits = 2)
 
 n = 10^5
 ID = 1:n
+bit_old = (rand(n) .> 0.5)
 number_of_host = 1
 # para_range = Uniform(0.05, 0.20)
 ε = 5*10^(-3)
-brownian = MvNormal(2, ε) # moving process
+brownian1 = MvNormal(2, 0.64ε) # moving process
+brownian2 = MvNormal(2, 1.44ε) # moving process
 end_time = 100
 
 notepad_I = open("training_I.csv", "w")
@@ -42,8 +44,9 @@ R_0 = β / μ
 println("β: $(r2(β)), μ: $(r2(μ)), R_0: $(r2(R_0))")
 if R_0 > 2 println("bom > 2!"); continue; end
 
-for seed ∈ 1:5
-println("                             T: $T - seed: $seed")
+# for seed ∈ 1:5
+# println("                             T: $T - seed: $seed")
+println("                             T: $T")
 S_ = zeros(Int64, end_time)
 I_ = zeros(Int64, end_time)
 R_ = zeros(Int64, end_time)
@@ -78,8 +81,13 @@ for t ∈ 1:end_time
     ID_S = ID[bit_S]
     ID_I = ID[bit_I]
 
-    location[:,ID_S] = mod.(location[:,ID_S] + rand(brownian, n_S), 1.0)
-    location[:,ID_I] = mod.(location[:,ID_I] + rand(brownian, n_I), 1.0)
+    temp = (.!(bit_R) .& bit_old)
+    location[:,temp] = mod.(location[:,temp] + rand(brownian1, sum(temp)), 1.0)
+    temp = (.!(bit_R) .& .!(bit_old))
+    location[:,temp] = mod.(location[:,temp] + rand(brownian2, sum(temp)), 1.0)
+
+    # location[:,ID_S] = mod.(location[:,ID_S] + rand(brownian, n_S), 1.0)
+    # location[:,ID_I] = mod.(location[:,ID_I] + rand(brownian, n_I), 1.0)
 
     kdtreeI = KDTree(location[:,ID_I])
     contact = length.(inrange(kdtreeI, location[:,ID_S], ε))
@@ -105,6 +113,6 @@ if I_[10] != 0
     end
 end
 
-end # for seed ∈ 1:5
+# end # for seed ∈ 1:5
 
 end # for T ∈ 1:10^7
