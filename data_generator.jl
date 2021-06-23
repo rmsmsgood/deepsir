@@ -20,9 +20,9 @@ ID = 1:n
 bit_old = (rand(n) .> 0.5)
 number_of_host = 1
 # para_range = Uniform(0.05, 0.20)
-ε = 5*10^(-3)
-brownian1 = MvNormal(2, 0.64ε) # moving process
-brownian2 = MvNormal(2, 1.44ε) # moving process
+ε = 0.002
+brownian1 = MvNormal(2, 0.01) # moving process
+brownian2 = MvNormal(2, 0.01) # moving process
 end_time = 100
 
 notepad_I = open("training_I.csv", "w")
