@@ -12,10 +12,11 @@ import os, sys, shutil
 # except IndexError:
 #   endtime = 100
 endtime = 100
+endtime -= 1
 
-DATA = pd.read_csv("training_I " + int(sys.argv[1]) + ".csv")
-Y = DATA.iloc[:40000,2:4].to_numpy()
-X = DATA.iloc[:40000,4:(4+endtime)].to_numpy(); X.shape
+DATA = pd.read_csv("training_I " + sys.argv[1] + ".csv")
+Y = DATA.iloc[:1500,2:4].to_numpy()
+X = DATA.iloc[:1500,4:(4+endtime)].to_numpy(); X.shape
 
 model = keras.Sequential()
 for k in range(6):
@@ -56,7 +57,7 @@ modelcheckpoint = keras.callbacks.ModelCheckpoint(filepath = "result/" + str(end
     save_best_only=True)
 
 history = model.fit(X, Y,
-  epochs=100,
+  epochs=1000,
   validation_split = 0.2,
   # callbacks=[modelcheckpoint])
   callbacks=[tensorboard, modelcheckpoint])
