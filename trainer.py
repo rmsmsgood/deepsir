@@ -6,13 +6,14 @@ import datetime
 import os, sys, shutil
 
 # os.chdir("C:/Users/rmsms/OneDrive/lab/deepsir")
-try:
-  endtime = int(sys.argv[1])
-except IndexError:
-  endtime = 100
-# endtime -= 1
 
-DATA = pd.read_csv("training_I.csv")
+# try:
+#   endtime = int(sys.argv[1])
+# except IndexError:
+#   endtime = 100
+endtime = 100
+
+DATA = pd.read_csv("training_I " + int(sys.argv[1]) + ".csv")
 Y = DATA.iloc[:40000,2:4].to_numpy()
 X = DATA.iloc[:40000,4:(4+endtime)].to_numpy(); X.shape
 
