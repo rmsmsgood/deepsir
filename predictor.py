@@ -1,20 +1,20 @@
 from tensorflow import keras
 import pandas as pd
 
-endtime = 10
+endtime = 100
 
-DATA = pd.read_csv("training_I.csv")
-Y = DATA.iloc[:40000,2:4].to_numpy()
-X = DATA.iloc[:40000,4:(4+endtime)].to_numpy(); X.shape
+DATA = pd.read_csv("training_I 5.csv")
+Y = DATA.iloc[:40000,1:3].to_numpy()
+X = DATA.iloc[:40000,3:(3+endtime)].to_numpy(); X.shape
 # Y = DATA.iloc[:,2:4].to_numpy()
 # X = DATA.iloc[:,4:].to_numpy()
 
 loaded = keras.models.load_model("best.h5")
 
-loaded.predict(X[:5]); Y[:5]
+loaded.predict(X[1500:1505]); Y[1500:1505]
 
-loaded.evaluate(X[:300], Y[:300])
-sum(sum((loaded.predict(X[:300]) - Y[:300])**2))/600
+loaded.evaluate(X[1500:1800], Y[1500:1800])
+sum(sum((loaded.predict(X[1500:1800]) - Y[1500:1800])**2))/600
 
 # ---
 

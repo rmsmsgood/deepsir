@@ -63,7 +63,7 @@ history = model.fit(X, Y,
   callbacks=[tensorboard, modelcheckpoint])
   # model_to_save = "T" + str(endtime) + " val_loss" + str(round(min(history.history['val_loss']),4))[1:] + ".h5"
   # shutil.copy("best.h5 ", model_to_save)
-report.write(sys.argv[1] + "," + str(round(min(history.history['val_loss']),9)) + "\n")
+report.write(sys.argv[1] + "," + format(min(history.history['val_loss']),".8f") + "\n")
 report.close()
 
 # model.predict(X[:3])
