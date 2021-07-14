@@ -50,7 +50,7 @@ report = open("report.csv", 'a')
 log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard = keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
 # earlystopping = callbacks.EarlyStopping(monitor='val_loss')
-modelcheckpoint = keras.callbacks.ModelCheckpoint(filepath = "result/" + str(endtime) + "/best.h5",
+modelcheckpoint = keras.callbacks.ModelCheckpoint(filepath = "result/" + sys.argv[1] + "/best.h5",
 # modelcheckpoint = keras.callbacks.ModelCheckpoint(filepath = "best.h5",
     monitor='val_loss',
     verbose = 1,
@@ -63,7 +63,7 @@ history = model.fit(X, Y,
   callbacks=[tensorboard, modelcheckpoint])
   # model_to_save = "T" + str(endtime) + " val_loss" + str(round(min(history.history['val_loss']),4))[1:] + ".h5"
   # shutil.copy("best.h5 ", model_to_save)
-report.write(sys.argv[1] + "," + str(round(min(history.history['val_loss']),7)) + "\n")
+report.write(sys.argv[1] + "," + str(round(min(history.history['val_loss']),9)) + "\n")
 report.close()
 
 # model.predict(X[:3])
