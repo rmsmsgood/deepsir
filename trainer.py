@@ -12,11 +12,11 @@ import os, sys, shutil
 # except IndexError:
 #   endtime = 100
 endtime = 100
-endtime -= 1
+variate = 2
 
 DATA = pd.read_csv("training_I " + sys.argv[1] + ".csv")
-Y = DATA.iloc[:1500,2:4].to_numpy()
-X = DATA.iloc[:1500,4:(4+endtime)].to_numpy(); X.shape
+Y = DATA.iloc[:1500,1:3].to_numpy()
+X = DATA.iloc[:1500,3:(3+endtime)].to_numpy(); X.shape; X
 
 model = keras.Sequential()
 for k in range(6):
@@ -63,7 +63,7 @@ history = model.fit(X, Y,
   callbacks=[tensorboard, modelcheckpoint])
   # model_to_save = "T" + str(endtime) + " val_loss" + str(round(min(history.history['val_loss']),4))[1:] + ".h5"
   # shutil.copy("best.h5 ", model_to_save)
-report.write(str(endtime) + "," + str(round(min(history.history['val_loss']),4)) + "\n")
+report.write(sys.argv[1] + "," + str(round(min(history.history['val_loss']),7)) + "\n")
 report.close()
 
 # model.predict(X[:3])
