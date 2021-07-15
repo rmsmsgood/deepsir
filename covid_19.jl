@@ -59,7 +59,7 @@ function main(seed_number, popower = 5)
         near2 = length.(near_calc(location, S, I, ϵ))
         death = rand(count(S)) .> ((1 - (iᵣₛ)) .^ near1) .* ((1 - iᵣ) .^ near2)
         state[S] += death
-        first_infected_time[S] = ones(count(S))
+        first_infected_time[S] = death .* i
         transition_time_E_to_I = first_infected_time + E_time
         transition_time_I_to_R = first_infected_time + I_time
         # 여기서 상태 변화
